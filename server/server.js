@@ -24,6 +24,7 @@ app.use(bodyParser.json());
 app.use(express.static(publicPath));
 
 app.get('/', (req, res) => {
+    // res.redirect('/rankings');
     res.render('index');
 });
 
