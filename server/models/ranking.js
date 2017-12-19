@@ -8,7 +8,7 @@ var RankingSchema = new mongoose.Schema( {
         minlength: 1,
         unique: true
     },
-    rank: {
+    ranking: {
         type: Number,
         required: true
     },
@@ -20,8 +20,8 @@ var RankingSchema = new mongoose.Schema( {
             type: String,
             required: true
         },
-        value : {
-            type: String,
+        value: {
+            type: Number,
             required: true
         }
     }]
@@ -29,15 +29,16 @@ var RankingSchema = new mongoose.Schema( {
 { usePushEach: true }
 );
 
-RankingSchema.statics.getRank = function (rank) {
+RankingSchema.statics.getRank = function (ranking) {
     var Ranking = this;
-    Ranking.find({rank});
+    return Ranking.find({ranking});
 }
 
 RankingSchema.statics.getSite = function (site) {
     var Ranking = this;
     return Ranking.findOne({site});
 }
+
 
 var Ranking = mongoose.model('Ranking', RankingSchema);
 

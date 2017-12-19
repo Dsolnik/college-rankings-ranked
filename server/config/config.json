@@ -2,11 +2,13 @@
     "test" : {
         "PORT" : 3000,
         "MONGODB_URI": "mongodb://localhost:27017/CollegeRankingsTest",
-        "JWT_SECRET" : "9sdjkfy23yy23uinasig7g2b34"
+        "JWT_SECRET" : "9sdjkfy23yy23uinasig7g2b34",
+        "COOKIE_SECRET": "asdfhhsdfhhj123"       
     },
     "development" : {
         "PORT" : 3000,
         "MONGODB_URI": "mongodb://localhost:27017/CollegeRankings",
-        "JWT_SECRET" : "afsd727hrhbhryguy23guyasd"
+        "JWT_SECRET" : "afsd727hrhbhryguy23guyasd",
+        "COOKIE_SECRET": "asdfhhsdfhhj123"
     }
 }

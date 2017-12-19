@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 var AdminSchema = new mongoose.Schema( {
     username: {
@@ -38,9 +41,11 @@ AdminSchema.methods.generateAuthToken = function () {
     var user = this;
     var access = 'auth';
     var token = jwt.sign({
-        _id: user._id.toHexString(), 
-        access
-    },process.env.JWT_SECRET).toString();
+        data: {
+            _id: user._id.toHexString(),
+            access
+            }
+    },process.env.JWT_SECRET,  { expiresIn: '1h' }).toString();
 
     user.tokens.push({
         access,
@@ -53,6 +58,22 @@ AdminSchema.methods.generateAuthToken = function () {
 
 };
 
+AdminSchema.statics.findByToken = async function(token) {
+    var User = this;
+    var decoded;
+
+    try{
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (e) {
+        throw new Error();
+    }
+
+    return User.findOne({'_id': decoded._id,
+        'tokens.token' : token,
+        'tokens.access' : 'auth'
+    });
+};
+
 AdminSchema.methods.removeToken = function (token) {
     var user = this;
 
@@ -63,17 +84,19 @@ AdminSchema.methods.removeToken = function (token) {
     });
 };
 
-AdminSchema.statics.findByUserAndPass = function (username, password) {
-    var User = this;
+AdminSchema.statics.login = async function (username, password) {
+    const Admin = this;
+    const user = await Admin.findByUserAndPass(username, password);
+    const token = await user.generateAuthToken();
+    return token;
+}
 
-    return User.findOne({
-        username, 
-        password
-        }).then((user) => {
-            if (!user) return Promise.reject();
-            return user;
-    }).catch((e) => Promise.reject());
+AdminSchema.statics.findByUserAndPass = async function (username, password) {
 
+    const Admin = this;
+    const user = await Admin.findOne({username, password});
+    if (!user) throw new Error();
+    return user;
 };
 
 
