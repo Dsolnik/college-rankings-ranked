@@ -39,7 +39,7 @@ const rankings = [{
     site: 'USNews',
     ranking: 2,
     imgUrl: 'https://UsNews.com',
-    status: [{
+    stats: [{
             name: 'Overall',
             value: 7.88
         },
@@ -58,7 +58,7 @@ const rankings = [{
     site: 'QS',
     ranking: 1,
     imgUrl: 'https://UsNews.com',
-    status: [{
+    stats: [{
             name: 'Overall',
             value: 8.52
         },{
@@ -76,7 +76,7 @@ const rankings = [{
     site: 'Times',
     ranking: 2,
     imgUrl: 'https://UsNews.com',
-    status: [{
+    stats: [{
             name: 'Overall',
             value: 6.82
         },{

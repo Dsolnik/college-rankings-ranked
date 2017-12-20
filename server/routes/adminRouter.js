@@ -23,7 +23,9 @@ var router = () => {
 
     // adminRouter.use(async (req, res, next) => {
         // if (!res.session || !res.session.token) return res.sendStatus(401);
+        // else {
 
+        // }
     // });
 
     adminRouter.route('/signUp')
@@ -46,32 +48,47 @@ var router = () => {
             res.send(404);
         });
 
-    // adminRouter.post('/create', async (req, res) => {
-        // let body = _.pick(req.body, ['site', 'stats', 'imgUrl', 'rank']);
-        // let newDoc = Ranking()
-    // });
+    adminRouter.post('/create', async (req, res) => {
+        let body = _.pick(req.body, ['site', 'stats', 'imgUrl', 'ranking']);
+        let newDoc = Ranking(body);
+        try {
+            let newRanking = await newDoc.save();
+            res.send(newRanking);
+        } catch (e) {
+            res.status(400).send();
+        }
+    });
 
     adminRouter.post('/update', async (req, res) => {
-        var {site, stats, imgUrl, rank} = req.body;
+        var {site, stats, imgUrl, ranking} = req.body;
 
         if (!site) return res.status(400).send();
 
         try {
-
             let doc = await Ranking.findOne({site});
-            if (stats) doc.stats.push(...stats);
+            if (!doc) {
+                let newDoc = await Ranking(_.pick(req.body, ['site', 'stats','imgUrl','ranking'])).save();
+                return res.send(newDoc);
+            }
+            if (stats) {
+                stats.forEach((stat) => {
+                    let obj = _.find(doc.stats, (curStat) => curStat.name === stat.name);
+                    if (obj) {
+                        obj.value = stat.value;
+                    }
+                    else {
+                        doc.stats.push(stat);
+                    }
+                });
+            }
             if (imgUrl) doc.imgUrl = imgUrl;
-            if (rank) doc.rank = rank;
-            let new_doc = await doc.save();
-            res.send(new_doc);
-
+            if (ranking) doc.ranking = ranking;
+            let newDoc = await doc.save();
+            res.send(newDoc);
         } catch (e) {
-
-            res.sendStatus(400)
-
+            res.sendStatus(400);
         }
     });
-
     return adminRouter;
 };
 

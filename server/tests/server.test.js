@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const {app} = require('./../server');
 const expect = require('expect');
 const request = require('supertest');
@@ -54,4 +55,254 @@ describe('POST /admin/signup', () => {
                 }).catch((e) => done(e));
           })
     });
+});
+
+describe('POST /admin/create', () => {
+    it('should correctly create rankings', (done) => {
+        let newRanking = {    
+            site: 'Niche',
+            ranking: 5,
+            imgUrl: 'https://niche.com',
+            stats: [{
+                name: 'Overall',
+                value: 5
+            },
+            {
+                name: 'Age',
+                value: 1
+            },
+            {
+                name: 'Traffic',
+                value: 1
+            }, {
+                name: 'reputation',
+                value: 2
+            }]
+        }
+        request(app)
+          .post('/admin/create')
+          .send(newRanking)
+          .expect(200)
+          .expect((res) => {
+            expect(res.body.site).toBe(newRanking.site);
+            expect(res.body.ranking).toBe(newRanking.ranking);
+            expect(res.body.imgUrl).toBe(newRanking.imgUrl);
+            expect(res.body.stats[0].name).toBe(newRanking.stats[0].name);
+            expect(res.body.stats[0].value).toBe(newRanking.stats[0].value);
+            expect(res.body.stats[3].name).toBe(newRanking.stats[3].name);
+            expect(res.body.stats[3].value).toBe(newRanking.stats[3].value);
+        }).end(async (err, res) => {
+            if (err) return done(err);
+            try {
+                let doc = await Ranking.getSite(newRanking.site);
+                expect(doc.site).toBe(newRanking.site);
+                expect(doc.ranking).toBe(newRanking.ranking);
+                expect(doc.imgUrl).toBe(newRanking.imgUrl);
+                expect(doc.stats[0].name).toBe(newRanking.stats[0].name);
+                expect(doc.stats[0].value).toBe(newRanking.stats[0].value);
+                expect(doc.stats[3].name).toBe(newRanking.stats[3].name);
+                expect(doc.stats[3].value).toBe(newRanking.stats[3].value);
+                done();
+            } catch (e) {
+                done(e);
+            }
+        });
+    });
+
+    it('should correctly reject invalid rankings', (done) => {
+        let newRanking = {    
+            site: 'Niche',
+            imgUrl: 'https://niche.com',
+            stats: [{
+                name: 'Overall',
+                value: 5
+            },
+            {
+                name: 'Age',
+                value: 1
+            },
+            {
+                name: 'Traffic',
+                value: 1
+            }, {
+                name: 'reputation',
+                value: 2
+            }]
+        }
+        request(app)
+          .post('/admin/create')
+          .send(newRanking)
+          .expect(400)
+        //   .end(done);
+          .expect((res) => {
+            expect(res.body.site).toBeFalsy();
+        //   }).end(done)
+        }).end(async (err, res) => {
+            if (err) return done(err);
+            try {
+                let doc = await Ranking.getSite(newRanking.site);
+                expect(doc).toBeFalsy();
+                done();
+            } catch (e) {
+                done(e);
+            }
+        });
+    });
+});
+
+describe('POST /admin/update', () => {
+    let newRanking = {    
+        site: 'Times',
+        ranking: 5,
+        imgUrl: 'https://niche.com',
+        stats: [{
+            name: 'Overall',
+            value: -1
+        },
+        {
+            name: 'Traffic',
+            value: -1
+        }, {
+            name: 'reputation',
+            value: -1
+        }, {
+            name: 'fake',
+            value : -1
+        }]
+    };
+
+    it('should reject inputs without site name', (done) => {
+        request(app)
+          .post('/admin/update')
+          .send(_.pick(newRanking, ['ranking', 'imgUrl', 'stats']))
+          .expect(400)
+          .end(done);
+    });
+
+    it('should correctly update ranking', (done) => {
+        request(app)
+          .post('/admin/update')
+          .send(_.pick(newRanking, ['site','ranking']))
+          .expect(200)
+          .expect((res) => {
+              expect(res.body.ranking).toBe(newRanking.ranking);
+          }).end(async (err, res) => {
+              if (err) return done(err);
+              try {
+                let doc = await Ranking.getSite(newRanking.site);
+                expect(doc.ranking).toBe(newRanking.ranking);
+                expect(doc.imgUrl).not.toBe(newRanking.imgUrl);
+                done();  
+              } catch (e) {
+                  done(e);
+              }
+          });
+    });
+
+    it('should correctly update imgUrl', (done) => {
+        request(app)
+          .post('/admin/update')
+          .send(_.pick(newRanking, ['site','imgUrl']))
+          .expect(200)
+          .expect((res) => {
+              expect(res.body.imgUrl).toBe(newRanking.imgUrl);
+          }).end(async (err, res) => {
+              if (err) return done(err);
+              try {
+                let doc = await Ranking.getSite(newRanking.site);
+                expect(doc.ranking).not.toBe(newRanking.ranking);
+                expect(doc.imgUrl).toBe(newRanking.imgUrl);
+                done();  
+              } catch (e) {
+                  done(e);
+              }
+          });
+    });
+
+    it('should correctly update stats', (done) => {
+        request(app)
+          .post('/admin/update')
+          .send(_.pick(newRanking, ['site','stats']))
+          .expect(200)
+          .expect((res) => {
+              newRanking.stats.forEach((stat) => {
+                let obj = _.find(res.body.stats, (curStat) => curStat.name === stat.name);
+                expect(obj.value).toBe(stat.value);
+              });
+          }).end(async (err, res) => {
+              if (err) return done(err);
+              try {
+                let doc = await Ranking.getSite(newRanking.site);
+                expect(doc.ranking).not.toBe(newRanking.ranking);
+                expect(doc.imgUrl).not.toBe(newRanking.imgUrl);
+                newRanking.stats.forEach((stat) => {
+                    let obj = _.find(doc.stats, (curStat) => curStat.name === stat.name);
+                    expect(obj.value).toBe(stat.value);
+                });
+                done();
+              } catch (e) {
+                  done(e);
+              }
+          });
+    });
+
+    it('should correctly update all 3', (done) => {
+        request(app)
+          .post('/admin/update')
+          .send(newRanking)
+          .expect(200)
+          .expect((res) => {
+              expect(res.body.imgUrl).toBe(newRanking.imgUrl);
+              expect(res.body.ranking).toBe(newRanking.ranking);
+              newRanking.stats.forEach((stat) => {
+                let obj = _.find(res.body.stats, (curStat) => curStat.name === stat.name);
+                expect(obj.value).toBe(stat.value);
+              });
+          }).end(async (err, res) => {
+              if (err) return done(err);
+              try {
+                let doc = await Ranking.getSite(newRanking.site);
+                expect(doc.ranking).toBe(newRanking.ranking);
+                expect(doc.imgUrl).toBe(newRanking.imgUrl);
+                newRanking.stats.forEach((stat) => {
+                    let obj = _.find(doc.stats, (curStat) => curStat.name === stat.name);
+                    expect(obj.value).toBe(stat.value);
+                });
+                done();
+              } catch (e) {
+                  done(e);
+              }
+          });
+    });
+
+    it('should correctly create if not found', (done) => {
+        newRanking.site = 'niche';
+        request(app)
+          .post('/admin/update')
+          .send(newRanking)
+          .expect(200)
+          .expect((res) => {
+              expect(res.body.imgUrl).toBe(newRanking.imgUrl);
+              expect(res.body.ranking).toBe(newRanking.ranking);
+              newRanking.stats.forEach((stat) => {
+                let obj = _.find(res.body.stats, (curStat) => curStat.name === stat.name);
+                expect(obj.value).toBe(stat.value);
+              });
+          }).end(async (err, res) => {
+              if (err) return done(err);
+              try {
+                let doc = await Ranking.getSite(newRanking.site);
+                expect(doc.ranking).toBe(newRanking.ranking);
+                expect(doc.imgUrl).toBe(newRanking.imgUrl);
+                newRanking.stats.forEach((stat) => {
+                    let obj = _.find(doc.stats, (curStat) => curStat.name === stat.name);
+                    expect(obj.value).toBe(stat.value);
+                });
+                done();
+              } catch (e) {
+                  done(e);
+              }
+          });
+    });
+
 });
