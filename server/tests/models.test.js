@@ -1,10 +1,10 @@
+const {app} = require('./../server');
 const expect = require('expect');
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
 const {populateAdmins, populateRankings, rankings, admins} = require('./seed/seed');
 const {Admin} = require('./../models/admin');
 const {Ranking} = require('./../models/ranking');
-const {app} = require('./../server');
 
 beforeEach(populateAdmins);
 beforeEach(populateRankings);
@@ -31,7 +31,7 @@ describe('Admin.generateAuthToken', () => {
     it('should correctly login the user', async () => {
         const token = await Admin.login('username1', 'password1');
         const admin = await Admin.findByUserAndPass('username1', 'password1');
-        expect(admin.tokens[0].token).toBe(token);
+        expect(admin.tokens[1].token).toBe(token);
     });
 });
 

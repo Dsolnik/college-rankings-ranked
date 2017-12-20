@@ -1,13 +1,24 @@
 const {ObjectID} = require('mongodb');
+const jwt = require('jsonwebtoken');
 const {Admin} = require('./../../models/admin');
 const {Ranking} = require('./../../models/ranking');
 
 const userOneID = new ObjectID(); 
 const userTwoID = new ObjectID(); 
+const access = 'auth';
 const admins = [{
     _id: userOneID,
     username: 'username1',
-    password: 'password1'
+    password: 'password1',
+    tokens: [{
+        access: 'auth',
+        token: jwt.sign({
+            data: {
+                _id: userOneID.toHexString(),
+                access
+                }
+        } ,process.env.JWT_SECRET,  { expiresIn: '1h' }).toString()
+    }]
 },
 {
     _id: userTwoID,
@@ -16,9 +27,11 @@ const admins = [{
     tokens: [{
         access: 'auth',
         token: jwt.sign({
-            _id: userTwoID.toHexString(), 
-            access: 'auth'
-        },process.env.JWT_SECRET).toString()
+            data: {
+                _id: userTwoID.toHexString(),
+                access
+                }
+        },process.env.JWT_SECRET,  { expiresIn: '1h' }).toString()
     }]
 }];
 

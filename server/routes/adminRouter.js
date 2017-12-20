@@ -12,10 +12,8 @@ var router = () => {
         })
         .post(async (req, res) => {
             let {username, password} = req.body;
-            // console.log(username, password);
             try {
                 let token = await Admin.login(username, password);
-                // console.log(token);
                 req.session.token = token;
                 res.header('x-auth', token).send();
             } catch (e) {
@@ -33,12 +31,11 @@ var router = () => {
             let body = _.pick(req.body,['username','password']);
             let newAdmin = Admin(body);
             try {
-                console.log('cool!');
                 let user = await newAdmin.save();
                 res.send(user);
             } catch (e) {
                 res.send(e);
-            }             
+            }
         });
 
     adminRouter.route('/check')
@@ -49,10 +46,10 @@ var router = () => {
             res.send(404);
         });
 
-    adminRouter.post('/create', async (req, res) => {
-        let body = _.pick(req.body, ['site', 'stats', 'imgUrl', 'rank']);
-        let newDoc = Ranking()
-    });
+    // adminRouter.post('/create', async (req, res) => {
+        // let body = _.pick(req.body, ['site', 'stats', 'imgUrl', 'rank']);
+        // let newDoc = Ranking()
+    // });
 
     adminRouter.post('/update', async (req, res) => {
         var {site, stats, imgUrl, rank} = req.body;
