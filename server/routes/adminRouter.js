@@ -7,12 +7,16 @@ var {Ranking} = require('./../models/ranking');
 var router = () => {
 
     adminRouter.route('/login')
+        // Get /admin/login
+        // renders login page login.ejs
         .get((req, res) => {
             res.render('login');
         })
         .post(async (req, res) => {
+            // get username and password from body
             let {username, password} = req.body;
             try {
+                // log user in and get session token
                 let token = await Admin.login(username, password);
                 req.session.token = token;
                 res.header('x-auth', token).send();
@@ -43,7 +47,7 @@ var router = () => {
     adminRouter.route('/check')
         .get((req, res) => {
             if (req.session && req.session.token) {
-                res.send('COOL!');
+                res.send('session token exists!');
             }
             res.send(404);
         });
@@ -73,12 +77,8 @@ var router = () => {
             if (stats) {
                 stats.forEach((stat) => {
                     let obj = _.find(doc.stats, (curStat) => curStat.name === stat.name);
-                    if (obj) {
-                        obj.value = stat.value;
-                    }
-                    else {
-                        doc.stats.push(stat);
-                    }
+                    if (obj) obj.value = stat.value;
+                    else doc.stats.push(stat);
                 });
             }
             if (imgUrl) doc.imgUrl = imgUrl;

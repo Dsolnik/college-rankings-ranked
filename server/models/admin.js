@@ -36,11 +36,13 @@ AdminSchema.methods.toJSON = function() {
     return _.pick(userObject, ['_id', 'username']);
 };
 
-AdminSchema.methods.generateAuthToken = function () {
+// admin.generateAuthToken
+// generates auth token for the admin, adding it to the users' tokens array and returning the token
+AdminSchema.methods.generateAuthToken = async function () {
 
     var user = this;
     var access = 'auth';
-    var token = jwt.sign({
+    var token = await jwt.sign({
         data: {
             _id: user._id.toHexString(),
             access
@@ -52,28 +54,13 @@ AdminSchema.methods.generateAuthToken = function () {
         token
     });
 
-    return user.save().then(() => {
-        return token;
-    });
+    await user.save();
 
+    return token;
 };
 
-AdminSchema.statics.findByToken = async function(token) {
-    var User = this;
-    var decoded;
-
-    try{
-        decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (e) {
-        throw new Error();
-    }
-
-    return User.findOne({'_id': decoded._id,
-        'tokens.token' : token,
-        'tokens.access' : 'auth'
-    });
-};
-
+// admin.removeToken
+// removes token from the tokens array
 AdminSchema.methods.removeToken = function (token) {
     var user = this;
 
@@ -84,6 +71,20 @@ AdminSchema.methods.removeToken = function (token) {
     });
 };
 
+// Admin.findByToken
+// verifies the token and finds user with that token
+AdminSchema.statics.findByToken = async function(token) {
+    const User = this;
+    let decoded = await jwt.verify(token, process.env.JWT_SECRET);
+    let user = await User.findOne({'_id': decoded._id,
+        'tokens.token' : token,
+        'tokens.access' : 'auth'
+    });
+    return user;
+};
+
+// Admin.login
+// logs in a user, returning an auth token for the session
 AdminSchema.statics.login = async function (username, password) {
     const Admin = this;
     const user = await Admin.findByUserAndPass(username, password);
