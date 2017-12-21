@@ -47,7 +47,7 @@ AdminSchema.methods.generateAuthToken = async function () {
             _id: user._id.toHexString(),
             access
             }
-    },process.env.JWT_SECRET,  { expiresIn: '1h' }).toString();
+    },process.env.JWT_SECRET).toString();
 
     user.tokens.push({
         access,

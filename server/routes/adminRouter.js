@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 var express = require('express');
 var adminRouter = express.Router();
 var _ = require('lodash');
@@ -25,12 +26,14 @@ var router = () => {
             }
         });
 
-    // adminRouter.use(async (req, res, next) => {
-        // if (!res.session || !res.session.token) return res.sendStatus(401);
-        // else {
-
-        // }
-    // });
+    adminRouter.use(async (req, res, next) => {
+        try {
+            var decoded = jwt.verify(req.session.token, process.env.JWT_SECRET);
+            next();
+        } catch (e) {
+            res.sendStatus(401);
+        }
+    });
 
     adminRouter.route('/signUp')
         .post(async (req, res) => {

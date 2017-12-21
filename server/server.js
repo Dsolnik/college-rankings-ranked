@@ -6,7 +6,7 @@ const path = require('path');
 const socketIO = require('socket.io');
 const http = require('http');
 const helmet = require('helmet');
-const cookieSession = require('cookie-session')
+const cookieSession = require('cookie-session');
 
 const {mongoose} = require('./db/mongoose');
 var {Admin} = require('./models/admin');
@@ -27,7 +27,7 @@ app.use(express.static(publicPath));
 app.use(helmet());
 app.use(cookieSession({
     name: 'session',
-    keys: [process.env.COOKIE_SECRET],
+    secret: process.env.COOKIE_SECRET,
     maxAge: 2 * 60 * 60 * 1000 // 2 hours
 }));
 
