@@ -79,18 +79,33 @@ describe('Ranking.insertRankAdjusting', () => {
                     value: 10
                 }]
         }
-        var doc = await Ranking.insertRankAdjusting(siteToAdd);
+        let doc = await Ranking.insertRankAdjusting(siteToAdd);
         let newrank = await Ranking.getSite('USNews');
         expect(newrank.ranking).toBe(3);
     });
 });
 
 describe('Ranking.changeSiteRank', () => {
-    it('should correctly lower rankings', () => {
-
+    it('should correctly increase rankings', async () => {
+        let doc = await Ranking.getSite('Times');
+        await doc.changeSiteRank(1);
+        let usnews = await Ranking.getSite('USNews');
+        expect(usnews.ranking).toBe(3);
+        let qs = await Ranking.getSite('QS');
+        expect(qs.ranking).toBe(1);
+        let site4 = await Ranking.getSite('Site4');
+        expect(site4.ranking).toBe(4);
     })
 
-    it('should correctly increase rankings', () => {
+    it('should correctly lower rankings', async () => {
+        let doc = await Ranking.getSite('Times');
+        await doc.changeSiteRank(5);
+        let usnews = await Ranking.getSite('USNews');
+        expect(usnews.ranking).toBe(2);
+        let qs = await Ranking.getSite('QS');
+        expect(qs.ranking).toBe(1);
+        let site5 = await Ranking.getSite('Site5');
+        expect(site5.ranking).toBe(4);
 
     });
 });

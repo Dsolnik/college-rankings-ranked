@@ -90,6 +90,28 @@ const rankings = [{
             name: 'reputation',
             value: 6.5
         }]
+}, {
+    site: 'Site4',
+    ranking: 4,
+    imgUrl: 'https://UsNews.com',
+    stats: [{
+            name: 'Overall',
+            value: 7.88
+        },
+        {
+            name: 'Age', 
+            value: 34
+        },
+        {
+            name: 'Traffic',
+            value: 4.038461538
+        }, {
+            name: 'reputation',
+            value: 10
+        }]
+} , {
+    site: 'Site5',
+    ranking: 5
 }
 ]
 
