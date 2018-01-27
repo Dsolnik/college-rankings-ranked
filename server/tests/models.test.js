@@ -56,3 +56,41 @@ describe('Ranking.getSite', () => {
         expect(number1.site).toBe('USNews');
     });
 });
+
+describe('Ranking.insertRankAdjusting', () => {
+    it('should correctly adjust all other ranking' , async () => {
+        let siteToAdd = {
+            site: 'CoolSite',
+            ranking: 1,
+            imgUrl: 'https://UsNews.com',
+            stats: [{
+                    name: 'Overall',
+                    value: 7.88
+                },
+                {
+                    name: 'Age', 
+                    value: 34
+                },
+                {
+                    name: 'Traffic',
+                    value: 4.038461538
+                }, {
+                    name: 'reputation',
+                    value: 10
+                }]
+        }
+        var doc = await Ranking.insertRankAdjusting(siteToAdd);
+        let newrank = await Ranking.getSite('USNews');
+        expect(newrank.ranking).toBe(3);
+    });
+});
+
+describe('Ranking.changeSiteRank', () => {
+    it('should correctly lower rankings', () => {
+
+    })
+
+    it('should correctly increase rankings', () => {
+
+    });
+});

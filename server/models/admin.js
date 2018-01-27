@@ -17,10 +17,7 @@ var AdminSchema = new mongoose.Schema( {
         minlength: 6,
     },
     tokens: [{
-        access:  {
-            type: String,
-            required: true
-        }, token: {
+        token: {
             type: String,
             required: true
         }
@@ -29,6 +26,8 @@ var AdminSchema = new mongoose.Schema( {
 { usePushEach: true }
 );
 
+// toJSON 
+//returns {_id: a234jfhasdf4h34, username: user}
 AdminSchema.methods.toJSON = function() {
     var user = this;
     var userObject = user.toObject();
@@ -43,10 +42,8 @@ AdminSchema.methods.generateAuthToken = async function () {
     var user = this;
     var access = 'auth';
     var token = await jwt.sign({
-        data: {
-            _id: user._id.toHexString(),
-            access
-            }
+        _id: user._id.toHexString(),
+        expiry: Date.now() + 2 * 60 * 60 * 1000 // expires in 2 hours
     },process.env.JWT_SECRET).toString();
 
     user.tokens.push({
@@ -74,11 +71,14 @@ AdminSchema.methods.removeToken = function (token) {
 // Admin.findByToken
 // verifies the token and finds user with that token
 AdminSchema.statics.findByToken = async function(token) {
-    const User = this;
+    const Admin = this;
     let decoded = await jwt.verify(token, process.env.JWT_SECRET);
-    let user = await User.findOne({'_id': decoded._id,
-        'tokens.token' : token,
-        'tokens.access' : 'auth'
+    if (decoded.expiry > Date.now()) {
+        throw new Error();
+        return;
+    }
+    let user = await Admin.findOne({'_id': decoded._id,
+        'tokens.token' : token
     });
     return user;
 };
@@ -92,8 +92,9 @@ AdminSchema.statics.login = async function (username, password) {
     return token;
 }
 
+//Admin.findByUserAndPass
+// given a username and password, finds the user or throws an error if couldn't find user
 AdminSchema.statics.findByUserAndPass = async function (username, password) {
-
     const Admin = this;
     const user = await Admin.findOne({username, password});
     if (!user) throw new Error();

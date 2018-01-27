@@ -29,6 +29,21 @@ var RankingSchema = new mongoose.Schema( {
 { usePushEach: true }
 );
 
+RankingSchema.methods.changeSiteRank = async function (newRank) {
+    let doc = this;
+    let oldRank = doc.ranking;
+    doc.ranking = newRank;
+    await doc.save();
+    if (oldRank > newRank) {
+        // if we're increasing ranking ( 5 -> 1 ), increase everyone who is in between his new rank and his old rank
+        // and everyone who was even with him
+        await this.model('Ranking').update({ranking: {$gt : newRank, $lte : oldRank}}, { "$inc" : {ranking : 1}});
+    } else {
+        // if we're decreasing ranking ( 1 -> 5 ), decrease everyone
+        await this.model('Ranking').update({ranking: {$gt : newRank, $lte : oldRank}}, { "$inc" : {ranking : -1}});
+    }
+}
+
 RankingSchema.statics.getRank = function (ranking) {
     var Ranking = this;
     return Ranking.find({ranking});
@@ -39,6 +54,18 @@ RankingSchema.statics.getSite = function (site) {
     return Ranking.findOne({site});
 }
 
+RankingSchema.statics.getAll = function () {
+    var Ranking = this;
+    return Ranking.find({});
+}
+
+RankingSchema.statics.insertRankAdjusting = async function (user) {
+    var Ranking = this;
+    var doc = new Ranking(user);
+    await doc.save();
+    await Ranking.updateMany({ranking : {$gt : doc.ranking}}, { "$inc" : {ranking : 1}});
+    return doc;
+}
 
 var Ranking = mongoose.model('Ranking', RankingSchema);
 

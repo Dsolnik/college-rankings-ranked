@@ -8,6 +8,7 @@ var {Ranking} = require('./../models/ranking');
 var router = () => {
 
     adminRouter.route('/login')
+
         // Get /admin/login
         // renders login page login.ejs
         .get((req, res) => {
@@ -20,17 +21,23 @@ var router = () => {
                 // log user in and get session token
                 let token = await Admin.login(username, password);
                 req.session.token = token;
-                res.header('x-auth', token).send();
+                // remove this header when in production
+                res.header('token', token).send();
             } catch (e) {
                 res.sendStatus(401);
             }
         });
 
+    // authenticate user
     adminRouter.use(async (req, res, next) => {
         try {
-            var decoded = jwt.verify(req.session.token, process.env.JWT_SECRET);
+            // if successfully decoded, move on
+            var decoded = await jwt.verify(req.session.token, process.env.JWT_SECRET);
+            // if it's expired
+            if (decoded.expiry > Date.now()) throw new Error();
             next();
         } catch (e) {
+            // if error in verification, send 401 Unauthorized
             res.sendStatus(401);
         }
     });
