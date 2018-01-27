@@ -13,10 +13,8 @@ const admins = [{
     tokens: [{
         access: 'auth',
         token: jwt.sign({
-            data: {
                 _id: userOneID.toHexString(),
-                access
-                }
+                expiry: Date.now() + 2 * 60 * 60 * 1000 
         } ,process.env.JWT_SECRET,  { expiresIn: '1h' }).toString()
     }]
 },
@@ -27,12 +25,10 @@ const admins = [{
     tokens: [{
         access: 'auth',
         token: jwt.sign({
-            data: {
-                _id: userTwoID.toHexString(),
-                access
-                }
-        },process.env.JWT_SECRET,  { expiresIn: '1h' }).toString()
-    }]
+            _id: userOneID.toHexString(),
+            expiry: Date.now() + 2 * 60 * 60 * 1000 
+    } ,process.env.JWT_SECRET,  { expiresIn: '1h' }).toString()
+}]
 }];
 
 const rankings = [{

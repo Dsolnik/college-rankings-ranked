@@ -73,7 +73,7 @@ AdminSchema.methods.removeToken = function (token) {
 AdminSchema.statics.findByToken = async function(token) {
     const Admin = this;
     let decoded = await jwt.verify(token, process.env.JWT_SECRET);
-    if (decoded.expiry > Date.now()) {
+    if (decoded.expiry < Date.now()) {
         throw new Error();
         return;
     }

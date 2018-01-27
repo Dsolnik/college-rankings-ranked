@@ -33,8 +33,8 @@ var router = () => {
         try {
             // if successfully decoded, move on
             var decoded = await jwt.verify(req.session.token, process.env.JWT_SECRET);
-            // if it's expired
-            if (decoded.expiry > Date.now()) throw new Error();
+            // if it's expired, error
+            if (Date.now() > decoded.expiry) throw new Error();
             next();
         } catch (e) {
             // if error in verification, send 401 Unauthorized
