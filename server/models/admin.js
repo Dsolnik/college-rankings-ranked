@@ -51,7 +51,7 @@ AdminSchema.methods.generateAuthToken = async function () {
     });
 
     try {
-    await user.save();
+        await user.save();
     }
     catch (e) {
         console.log(e);

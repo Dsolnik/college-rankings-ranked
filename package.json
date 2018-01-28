@@ -21,8 +21,7 @@
     "helmet": "^3.9.0",
     "jsonwebtoken": "^8.1.0",
     "mongodb": "^3.0.0-rc0",
-    "mongoose": "^4.13.7",
-    "socket.io": "^2.0.4"
+    "mongoose": "^4.13.7"
   },
   "devDependencies": {
     "expect": "^21.2.1",

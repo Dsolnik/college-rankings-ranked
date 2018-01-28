@@ -19,7 +19,6 @@ var adminRouter = require('./routes/adminRouter')();
 
 var app = express();
 var server = http.createServer(app);
-var io = socketIO(server);
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
@@ -31,62 +30,19 @@ app.use(cookieSession({
     maxAge: 2 * 60 * 60 * 1000 // 2 hours
 }));
 
+app.use('/admin', adminRouter);
+
 app.get('/', async (req, res) => {
-    // res.redirect('/rankings');
     const docs = await Ranking.getAll();
-    console.log(docs[0]);
     res.render('index', {docs});
 });
 
-app.get('/rankings', async (req, res) => {
-    try {
-        const docs = await Ranking.getAll();
-        res.render('rankings', {docs});
-    } catch (e) {
-        res.status(404).render('error', {
-            errorTitle: 'Internal Error',
-            errorMsg: 'Sorry, we had an error finding those!'
-        });
-    }
-});
-
-
-app.use('/admin', adminRouter);
-
+// default error page
 app.use((req, res) => {
     res.status(404).render('error', {
         errorTitle: 'Not Found',
         errorMsg: 'Sorry, we couldn\'t find that'});
 })
-
-// io.on('connect', (socket) => {
-//     console.log('socket connected!');
-
-//     socket.on('loginReq', async (params, cb) => {
-//         var {username, password} = params;
-//         try {
-//             const user = await Admin.findByUserAndPass(username, password);
-//             // const auth = await user.generateAuthToken();
-//             cb('cool');
-//         } catch (e) {
-//             cb('invalid credentials');
-//         }
-//     });
-
-//     socket.on('createSiteReq', (params, cb) => {
-//         var newRanking = new Ranking(params);
-//         newRanking.save().then((doc) => {
-//             cb({
-//                 completed: true,
-//                 conent: doc
-//             });
-//         }).catch((e) => cb({
-//             completed: false,
-//             content: e
-//         }));
-//     });
-
-// })
 
 server.listen(PORT, () => {
     console.log(`server is up on port ${PORT}`)
