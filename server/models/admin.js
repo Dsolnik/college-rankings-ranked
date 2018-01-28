@@ -92,9 +92,7 @@ AdminSchema.statics.findByToken = async function(token) {
 AdminSchema.statics.login = async function (username, password) {
     const Admin = this;
     const user = await Admin.findByUserAndPass(username, password);
-    console.log("good!");
     const token = await user.generateAuthToken();
-    console.log("good!2");
     return token;
 }
 
