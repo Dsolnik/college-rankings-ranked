@@ -1,3 +1,65 @@
-$(document).ready(function() {
+function transformStats (stats) {
+    var newStats = [];
+    for (var i = 0; i < stats.length / 2; i++) {
+        newStats.push({name: stats[i], value: stats[i + 1]});
+    }
+    return newStats;
+}
 
+$(document).ready(function() {
+    var addRank = $('#insertRanking');
+    var addStat = $('#addStat');
+    var statsForm = $('[name=stats-form');
+    var siteElem = $('[name=site]');
+    var rankingElem = $('[name=ranking]');
+    var descriptionElem = $('[name=description]');
+    var statsElems = $('[name=key], [name=value]');
+    var imgUrlElem = $('[name=imgUrl]');
+
+    addStat.on('click', function(e) {
+        e.preventDefault();
+        let elem = $('<input type="text" name="key" placeholder="name" style="width: 45%"><input type="number" name="value" placeholder="value" style="width: 45%"><br>');        
+        statsForm.append(elem);
+    });
+
+    addRank.on('submit', function(e) {
+        e.preventDefault();
+        var site = siteElem.val();
+        var ranking = rankingElem.val();
+        var description = descriptionElem.val();
+        var imgUrl = imgUrlElem.val();
+        var stats = [];
+        statsElems.each(function () {
+            stats.push(this.value);
+        });
+        stats = transformStats(stats);
+        $.ajax({
+            //The URL to process the request
+              'url' : '/admin/create',
+            //The type of request, also known as the "method" in HTML forms
+            //Can be 'GET' or 'POST'
+              'type' : 'POST',
+              contentType: "application/json; charset=utf-8",
+              //Any post-data/get-data parameters
+            //This is optional
+              'data' : JSON.stringify({
+                'site' : site,
+                'ranking' : ranking,
+                'description' : description,
+                'stats' : stats,
+                'imgUrl' : imgUrl
+              }),
+            //The response from the server
+              'success' : function() {
+              //You can use any jQuery/JavaScript here!!!
+                statsElems.val('');
+                rankingElem.val('');
+                siteElem.val('');
+                descriptionElem.val('');
+              },
+              'error' : function() {
+                  console.log('didn\'t work');
+              }
+            });
+    });
 });

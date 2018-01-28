@@ -37,8 +37,8 @@ var router = () => {
             if (Date.now() > decoded.expiry) throw new Error();
             next();
         } catch (e) {
-            // if error in verification, send 401 Unauthorized
-            res.sendStatus(401);
+            // if error in verification, redirect to /admin/login
+            res.redirect('/admin/login');
         }
     });
 

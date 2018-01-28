@@ -62,7 +62,7 @@ RankingSchema.statics.getSite = function (site) {
 
 RankingSchema.statics.getAll = function () {
     var Ranking = this;
-    return Ranking.find({});
+    return Ranking.find({}).sort('ranking');
 }
 
 RankingSchema.statics.insertRankAdjusting = async function (user) {
