@@ -77,7 +77,7 @@ var router = () => {
             res.status(400).send();
         }
     });
-
+    
     adminRouter.post('/update', async (req, res) => {
         var {site, stats, imgUrl, ranking, description} = req.body;
 
