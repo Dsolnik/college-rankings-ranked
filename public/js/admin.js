@@ -44,7 +44,7 @@ $(document).ready(function() {
               }
         });
     });
-    
+
     addStat.on('click', function(e) {
         e.preventDefault();
         let elem = $('<input type="text" name="key" placeholder="name" style="width: 45%"><input type="number" name="value" placeholder="value" style="width: 45%"><br>');        
@@ -62,13 +62,13 @@ $(document).ready(function() {
             stats.push(this.value);
         });
         stats = transformStats(stats);
-        console.log({
-            'site' : site,
-            'ranking' : ranking,
-            'description' : description,
-            'stats' : stats,
-            'imgUrl' : imgUrl
-          });
+        // console.log({
+        //     'site' : site,
+        //     'ranking' : ranking,
+        //     'description' : description,
+        //     'stats' : stats,
+        //     'imgUrl' : imgUrl
+        //   });
         $.ajax({
             //The URL to process the request
               'url' : '/admin/create',

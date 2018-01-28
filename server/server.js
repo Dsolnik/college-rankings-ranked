@@ -3,7 +3,6 @@ require('./config/config');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const socketIO = require('socket.io');
 const http = require('http');
 const helmet = require('helmet');
 const cookieSession = require('cookie-session');
