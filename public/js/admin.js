@@ -88,7 +88,8 @@ $(document).ready(function() {
             //The response from the server
               'success' : function() {
               //You can use any jQuery/JavaScript here!!!
-                statsElems.val('');
+                statsElems.each( function () { 
+                this.value = '';});
                 rankingElem.val('');
                 siteElem.val('');
                 descriptionElem.val('');
