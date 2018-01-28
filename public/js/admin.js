@@ -1,7 +1,7 @@
 function transformStats (stats) {
     var newStats = [];
     for (var i = 0; i < stats.length / 2; i++) {
-        newStats.push({name: stats[i], value: stats[i + 1]});
+        newStats.push({name: stats[i], value: stats[i + stats.length / 2]});
     }
     return newStats;
 }
@@ -13,7 +13,6 @@ $(document).ready(function() {
     var siteElem = $('[name=site]');
     var rankingElem = $('[name=ranking]');
     var descriptionElem = $('[name=description]');
-    var statsElems = $('[name=key], [name=value]');
     var imgUrlElem = $('[name=imgUrl]');
 
     var removeRank = $('#removeRanking');
@@ -58,17 +57,23 @@ $(document).ready(function() {
         var description = descriptionElem.val();
         var imgUrl = imgUrlElem.val();
         var stats = [];
-        statsElems.each(function () {
+        var statsElemsKey = $('[name=key]');
+        var statsElemsValue = $('[name=value]');
+        statsElemsKey.each(function () {
             stats.push(this.value);
         });
+        statsElemsValue.each(function () {
+          stats.push(parseInt(this.value));
+      });
+
         stats = transformStats(stats);
-        // console.log({
-        //     'site' : site,
-        //     'ranking' : ranking,
-        //     'description' : description,
-        //     'stats' : stats,
-        //     'imgUrl' : imgUrl
-        //   });
+        console.log({
+            'site' : site,
+            'ranking' : ranking,
+            'description' : description,
+            'stats' : stats,
+            'imgUrl' : imgUrl
+          });
         $.ajax({
             //The URL to process the request
               'url' : '/admin/create',
@@ -88,7 +93,9 @@ $(document).ready(function() {
             //The response from the server
               'success' : function() {
               //You can use any jQuery/JavaScript here!!!
-                statsElems.each( function () { 
+                statsElemsKey.each( function () { 
+                this.value = '';});
+                statsElemsValue.each( function () { 
                 this.value = '';});
                 rankingElem.val('');
                 siteElem.val('');
