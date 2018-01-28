@@ -55,6 +55,19 @@ RankingSchema.statics.getRank = function (ranking) {
     return Ranking.find({ranking});
 }
 
+RankingSchema.statics.removeSite = async function (site) {
+    var Ranking = this;
+    return Ranking.remove({site});
+}
+
+RankingSchema.statics.removeSiteAdjusting = async function (site) {
+    var Ranking = this;
+    var rank = await Ranking.findOne({site}).ranking;
+    await Ranking.remove({site});
+    return Ranking.where('ranking').gt(rank).updateMany({ "$inc" : {ranking : -1}});
+}
+
+
 RankingSchema.statics.getSite = function (site) {
     var Ranking = this;
     return Ranking.findOne({site});

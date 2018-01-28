@@ -363,3 +363,11 @@ describe('POST /admin/update', () => {
           });
     });
 });
+
+describe('POST /admin/remove', () => {
+    it('should remove somebody', async () => {
+        await Ranking.removeSite('QS');
+        var doc = await Ranking.getSite('QS');
+        expect(doc).toBeFalsy();
+    })
+})

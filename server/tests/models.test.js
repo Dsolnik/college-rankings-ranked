@@ -110,3 +110,11 @@ describe('Ranking.changeSiteRank', () => {
 
     });
 });
+
+describe('Ranking.removeSite', () => {
+    it('should correctly remove rankings', async () => {
+        await Ranking.removeSite('QS');
+        let doc = await Ranking.getSite('QS');
+        expect(doc).toBeFalsy();
+    });
+})

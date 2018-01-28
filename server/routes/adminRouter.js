@@ -77,7 +77,18 @@ var router = () => {
             res.status(400).send();
         }
     });
-    
+
+    adminRouter.post('/remove', async (req, res) => {
+        try {
+            console.log(req.body.site);
+            await Ranking.removeSite(req.body.site);
+            res.send();
+        } catch (e) {
+            res.status(404).send();
+        }
+    });
+
+
     adminRouter.post('/update', async (req, res) => {
         var {site, stats, imgUrl, ranking, description} = req.body;
 
