@@ -80,7 +80,8 @@ var router = () => {
 
     adminRouter.post('/remove', async (req, res) => {
         try {
-            await Ranking.removeSite(req.body.site.trim());
+            // console.log(req.body.site.trim());
+            Ranking.removeSite(req.body.site.trim());
             res.send();
         } catch (e) {
             res.status(404).send();

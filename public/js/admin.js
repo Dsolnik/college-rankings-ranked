@@ -43,7 +43,8 @@ $(document).ready(function() {
                   console.log('didn\'t work');
               }
         });
-    })
+    });
+    
     addStat.on('click', function(e) {
         e.preventDefault();
         let elem = $('<input type="text" name="key" placeholder="name" style="width: 45%"><input type="number" name="value" placeholder="value" style="width: 45%"><br>');        

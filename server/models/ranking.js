@@ -57,13 +57,13 @@ RankingSchema.statics.getRank = function (ranking) {
 
 RankingSchema.statics.removeSite = async function (site) {
     var Ranking = this;
-    return Ranking.remove({site});
+    return Ranking.remove({site : {$regex : new RegExp(site, "i") }});
 }
 
 RankingSchema.statics.removeSiteAdjusting = async function (site) {
     var Ranking = this;
     var rank = await Ranking.findOne({site}).ranking;
-    await Ranking.remove({site});
+    await Ranking.remove({site : {$regex : new RegExp(site, "i") }});
     return Ranking.where('ranking').gt(rank).updateMany({ "$inc" : {ranking : -1}});
 }
 
