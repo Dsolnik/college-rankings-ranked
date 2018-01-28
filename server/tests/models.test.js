@@ -62,6 +62,7 @@ describe('Ranking.insertRankAdjusting', () => {
         let siteToAdd = {
             site: 'CoolSite',
             ranking: 1,
+            description: "none",
             imgUrl: 'https://UsNews.com',
             stats: [{
                     name: 'Overall',

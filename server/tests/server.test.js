@@ -80,6 +80,7 @@ describe('POST /admin/create', () => {
         let newRanking = {    
             site: 'Niche',
             ranking: 5,
+            description: 'none',
             imgUrl: 'https://niche.com',
             stats: [{
                 name: 'Overall',
@@ -108,6 +109,7 @@ describe('POST /admin/create', () => {
         let newRanking = {    
             site: 'Niche',
             ranking: 5,
+            description: "none",
             imgUrl: 'https://niche.com',
             stats: [{
                 name: 'Overall',
@@ -201,6 +203,7 @@ describe('POST /admin/update', () => {
         site: 'Times',
         ranking: 5,
         imgUrl: 'https://niche.com',
+        description: "none",
         stats: [{
             name: 'Overall',
             value: -1

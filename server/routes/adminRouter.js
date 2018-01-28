@@ -42,6 +42,11 @@ var router = () => {
         }
     });
 
+    adminRouter.route('/')
+        .get(async (req, res) => {
+            res.render('admin');
+        })
+
     adminRouter.route('/signUp')
         .post(async (req, res) => {
             let body = _.pick(req.body,['username','password']);
@@ -63,7 +68,7 @@ var router = () => {
         });
 
     adminRouter.post('/create', async (req, res) => {
-        let body = _.pick(req.body, ['site', 'stats', 'imgUrl', 'ranking']);
+        let body = _.pick(req.body, ['site', 'stats', 'imgUrl', 'ranking', 'description']);
         let newDoc = Ranking(body);
         try {
             let newRanking = await newDoc.save();
@@ -74,14 +79,14 @@ var router = () => {
     });
 
     adminRouter.post('/update', async (req, res) => {
-        var {site, stats, imgUrl, ranking} = req.body;
+        var {site, stats, imgUrl, ranking, description} = req.body;
 
         if (!site) return res.status(400).send();
 
         try {
             let doc = await Ranking.findOne({site});
             if (!doc) {
-                let newDoc = await Ranking(_.pick(req.body, ['site', 'stats','imgUrl','ranking'])).save();
+                let newDoc = await Ranking(_.pick(req.body, ['site', 'stats','imgUrl','ranking', 'description'])).save();
                 return res.send(newDoc);
             }
             if (stats) {

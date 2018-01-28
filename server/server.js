@@ -31,9 +31,11 @@ app.use(cookieSession({
     maxAge: 2 * 60 * 60 * 1000 // 2 hours
 }));
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     // res.redirect('/rankings');
-    res.render('index');
+    const docs = await Ranking.getAll();
+    console.log(docs[0]);
+    res.render('index', {docs});
 });
 
 app.get('/rankings', async (req, res) => {

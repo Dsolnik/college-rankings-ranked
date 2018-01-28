@@ -35,7 +35,7 @@ const rankings = [{
     site: 'USNews',
     ranking: 2,
     imgUrl: 'https://UsNews.com',
-    stats: [{
+    description: "none", stats: [{
             name: 'Overall',
             value: 7.88
         },
@@ -54,7 +54,7 @@ const rankings = [{
     site: 'QS',
     ranking: 1,
     imgUrl: 'https://UsNews.com',
-    stats: [{
+    description: "none", stats: [{
             name: 'Overall',
             value: 8.52
         },{
@@ -72,7 +72,7 @@ const rankings = [{
     site: 'Times',
     ranking: 2,
     imgUrl: 'https://UsNews.com',
-    stats: [{
+    description: "none", stats: [{
             name: 'Overall',
             value: 6.82
         },{
@@ -90,7 +90,7 @@ const rankings = [{
     site: 'Site4',
     ranking: 4,
     imgUrl: 'https://UsNews.com',
-    stats: [{
+    description: "none", stats: [{
             name: 'Overall',
             value: 7.88
         },
@@ -107,7 +107,8 @@ const rankings = [{
         }]
 } , {
     site: 'Site5',
-    ranking: 5
+    ranking: 5,
+    description: "none"
 }
 ]
 
