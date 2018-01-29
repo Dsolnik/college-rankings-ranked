@@ -44,7 +44,7 @@ var router = () => {
 
     adminRouter.route('/')
         .get(async (req, res) => {
-            res.render('admin');
+            res.render('admin', {docs: await Ranking.getAll()});
         })
 
     adminRouter.route('/signUp')
@@ -91,7 +91,7 @@ var router = () => {
 
     adminRouter.post('/update', async (req, res) => {
         var {site, stats, imgUrl, ranking, description} = req.body;
-
+        console.log(req.body);
         if (!site) return res.status(400).send();
 
         try {

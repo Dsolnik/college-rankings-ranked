@@ -1,12 +1,15 @@
 function transformStats (stats) {
     var newStats = [];
     for (var i = 0; i < stats.length / 2; i++) {
+      if(stats[i] != '' && stats[i + stats.length / 2]){
         newStats.push({name: stats[i], value: stats[i + stats.length / 2]});
+      }
     }
     return newStats;
 }
 
 $(document).ready(function() {
+
     var addRank = $('#insertRanking');
     var addStat = $('#addStat');
     var statsForm = $('[name=stats-form');
@@ -35,11 +38,11 @@ $(document).ready(function() {
               }),
             //The response from the server
               'success' : function() {
-              //You can use any jQuery/JavaScript here!!!
-                removeSiteElem.val('');
+                // removeSiteElem.val('');
+                window.location.href = "/admin"
                 },
               'error' : function() {
-                  console.log('didn\'t work');
+                alert('request not succesful');
               }
         });
     });
@@ -65,9 +68,14 @@ $(document).ready(function() {
         statsElemsValue.each(function () {
           stats.push(parseInt(this.value));
       });
+      stats = transformStats(stats);
+      var edit = {site};
+      if (ranking) edit.ranking = ranking;
+      if (description) edit.description = description;
+      if (imgUrl) edit.imgUrl = description;
+      if (stats.length > 0) edit.stats = stats;
 
-        stats = transformStats(stats);
-        console.log({
+      console.log({
             'site' : site,
             'ranking' : ranking,
             'description' : description,
@@ -76,34 +84,29 @@ $(document).ready(function() {
           });
         $.ajax({
             //The URL to process the request
-              'url' : '/admin/create',
+              'url' : '/admin/update',
             //The type of request, also known as the "method" in HTML forms
             //Can be 'GET' or 'POST'
               'type' : 'POST',
               contentType: "application/json; charset=utf-8",
               //Any post-data/get-data parameters
             //This is optional
-              'data' : JSON.stringify({
-                'site' : site,
-                'ranking' : ranking,
-                'description' : description,
-                'stats' : stats,
-                'imgUrl' : imgUrl
-              }),
+              'data' : JSON.stringify(edit),
             //The response from the server
               'success' : function() {
               //You can use any jQuery/JavaScript here!!!
-                statsElemsKey.each( function () { 
-                this.value = '';});
-                statsElemsValue.each( function () { 
-                this.value = '';});
-                rankingElem.val('');
-                siteElem.val('');
-                descriptionElem.val('');
-                imgUrlElem.val('');
+                // statsElemsKey.each( function () { 
+                // this.value = '';});
+                // statsElemsValue.each( function () { 
+                // this.value = '';});
+                // rankingElem.val('');
+                // siteElem.val('');
+                // descriptionElem.val('');
+                // imgUrlElem.val('');
+                window.location.href = "/admin"
               },
               'error' : function() {
-                  console.log('didn\'t work');
+                alert('request not succesful');
               }
             });
     });

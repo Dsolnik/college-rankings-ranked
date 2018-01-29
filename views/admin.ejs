@@ -2,10 +2,23 @@
 <html>
     <head>
         <meta charset='utf-8'> 
-        <title>Admin Login</title>
+        <title>Admin Panel</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
         <link rel="stylesheet" href="/css/styles.css">
     </head>
+
+    <body class="centered-form">
+        <div class="centered-form__form" style="width:85%;">
+            <%docs.forEach((doc) => { %>
+            <div class="form-field">
+                <h3><%=doc.ranking + ' ' + doc.site%></h3>
+                <%doc.stats.forEach((stat) => {%>
+                    <%=stat.name + ':' + stat.value%>, 
+                <%})%>
+            </div>
+            <% });%>
+        </div>
+    </body>
 
     <body class="centered-form">
             <div class="centered-form__form" style="width:85%;">
@@ -28,7 +41,7 @@
         <div class="centered-form__form" style="width:85%;">
             <form id="insertRanking" action="#">
                     <div class="form-field">
-                        <h3>Add Site</h3>
+                        <h3>Add/Update Site</h3>
                     </div>
                     <div class="form-field">
                         Site:
